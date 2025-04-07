@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Home Credit Cash Loan (Version 2 - Revised)</title>
+  <style>
+    /* --- Basic Reset & Font --- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Aptos', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    a {
+      text-decoration: none;
+      color: red;
+      cursor: pointer;
+    }
+    
+    /* --- Utility & Layout --- */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .screen {
+      display: none;
+    }
+    .active {
+      display: block;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 30px;
+    }
+    .brand {
+      color: red;
+      font-weight: bold;
+      font-size: 20px;
+    }
+    /* Footer subtext (common to every screen) */
+    .footer-subtext {
+      font-size: 12px;
+      font-style: italic;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    /* --- Buttons & Inputs --- */
+    .cta {
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 16px;
+      border-radius: 4px;
+    }
+    .cta:hover {
+      background-color: #c90000;
+    }
+    .grey-btn {
+      background-color: #ccc;
+      color: #333;
+      font-style: italic;
+      border: none;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+    .adjust-btn {
+      background-color: white;
+      color: black;
+      border: 1px solid black;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 14px;
+      border-radius: 4px;
+    }
+    .adjust-btn:hover {
+      background-color: #f2f2f2;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+    
+    /* --- Screen 1: Landing Page --- */
+    #screen1 {
+      text-align: center;
+      padding-top: 40px;
+    }
+    #screen1 h1 {
+      font-size: 60px;
+      margin-bottom: 10px;
+    }
+    /* Removed subtext below h1 so it appears only once as footer */
+    
+    /* --- Screen 2: Loan Calculator --- */
+    #screen2 .title {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+    .calculator-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .summary-box {
+      flex: 1;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 20px;
+      min-width: 250px;
+      max-width: 350px;
+    }
+    .summary-box h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+    .summary-box p {
+      margin-bottom: 10px;
+    }
+    .calc-controls {
+      flex: 2;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 20px;
+      min-width: 300px;
+    }
+    .slider-row {
+      margin-bottom: 20px;
+    }
+    .slider-row label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .terms-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .term-box {
+      padding: 10px 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .term-box.selected {
+      border-color: red;
+      font-weight: bold;
+    }
+    .addons-row {
+      margin-bottom: 20px;
+    }
+    .monthly-result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    /* --- Screen 3: Offer Screen (Version 2) --- */
+    #screen3 .offer-container {
+      text-align: center;
+      max-width: 500px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 20px;
+    }
+    #screen3 .offer-container h2 {
+      margin-bottom: 15px;
+    }
+    #screen3 .vas-summary {
+      font-style: italic;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    #screen3 .loan-term,
+    #screen3 .monthly-installment {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    #screen3 .actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    
+    /* --- Screen 4: Adjust Offer --- */
+    #screen4 { }
+    
+    /* --- Screen 5: Final Form Screen --- */
+    .form-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .summary-box, .form-box {
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 20px;
+    }
+    .form-box {
+      flex: 2;
+      min-width: 300px;
+    }
+    .subsubtext {
+      font-size: 12px;
+      font-style: italic;
+      margin-top: 10px;
+    }
+    
+    /* --- Modal (for "I am not interested") --- */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      max-width: 400px;
+      text-align: center;
+      border-radius: 4px;
+    }
+    .modal-buttons {
+      margin-top: 20px;
+    }
+    .modal-buttons button {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Screen 1: Landing Page -->
+  <div id="screen1" class="screen active">
+    <div class="container">
+      <div class="header">
+        <span class="brand">Home Credit</span>
+      </div>
+      <h1>You are eligible for a cash loan</h1>
+      <div style="margin-top:30px;">
+        <button class="cta" onclick="goToScreen('2')">Compute Offer →</button>
+      </div>
+      <div class="footer-subtext">(This is exclusive to Home Credit employees only, please do not distribute externally.)</div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Loan Calculator -->
+  <div id="screen2" class="screen">
+    <div class="container">
+      <div class="header">
+        <span class="brand">Home Credit</span>
+      </div>
+      <div class="title">Get a sample cash loan computation</div>
+      <div class="calculator-container">
+        <!-- Summary Box -->
+        <div class="summary-box">
+          <h3>Loan Summary</h3>
+          <p>Loan Term: <span id="summaryTerm">24</span> months</p>
+          <p>Loan Amount: Php <span id="summaryAmount">50,000</span></p>
+          <p>Processing Fee: Php 500</p>
+          <p>Amount to be Disbursed: Php <span id="summaryDisbursed">49,500</span></p>
+          <p class="monthly-result">Est. Monthly: Php <span id="summaryMonthly">0.00</span></p>
+        </div>
+        <!-- Calculator Controls -->
+        <div class="calc-controls">
+          <div class="slider-row">
+            <p><strong>Selected Amount:</strong> ₱<span id="loanAmountDisplay">50,000</span></p>
+            <label>How much money do you need?</label>
+            <input type="range" id="loanAmount" min="10000" max="150000" step="1000" value="50000" oninput="updateCalculator()">
+          </div>
+          <div>
+            <label>Sample Loan Terms (months):</label>
+            <div class="terms-row" id="termOptions"></div>
+          </div>
+          <div class="addons-row">
+            <div class="checkbox-label">
+              <input type="checkbox" id="borrowerProtection" checked onchange="updateCalculator()">
+              <label for="borrowerProtection">Borrower's Protection</label>
+            </div>
+            <div class="checkbox-label">
+              <input type="checkbox" id="extraCare" checked onchange="updateCalculator()">
+              <label for="extraCare">Extra Care</label>
+            </div>
+          </div>
+          <div class="monthly-result">
+            Estimated Monthly Installment: ₱<span id="monthlyInstallment">0.00</span>
+          </div>
+          <div style="margin-top:20px;">
+            <button class="cta" onclick="goToScreen('3')">Continue</button>
+          </div>
+          <div style="margin-top:10px;">
+            <button onclick="goToScreen('1')">Back</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-subtext">(This is exclusive to Home Credit employees only, please do not distribute externally.)</div>
+    </div>
+  </div>
+
+  <!-- Screen 3: Offer Screen (Version 2) -->
+  <div id="screen3" class="screen">
+    <div class="container">
+      <div class="header">
+        <span class="brand">Home Credit</span>
+      </div>
+      <div class="offer-container">
+        <h2>Good news, you have an offer for <span id="offerLoanAmount"></span></h2>
+        <p class="vas-summary">Value Added Services: <span id="offerVAS"></span></p>
+        <p class="loan-term">Loan term: <span id="offerLoanTerm"></span> months</p>
+        <p class="monthly-installment">Monthly installment: ₱<span id="offerMonthly"></span></p>
+        <div class="actions">
+          <button class="cta" onclick="selectOfferAndContinue()">Continue</button>
+          <button onclick="goToAdjust()">Adjust Offer</button>
+          <button class="grey-btn" onclick="showNotInterestedModal()">I am not interested</button>
+        </div>
+      </div>
+      <div class="footer-subtext">(This is exclusive to Home Credit employees only, please do not distribute externally.)</div>
+    </div>
+  </div>
+
+  <!-- Screen 4: Adjust Offer -->
+  <div id="screen4" class="screen">
+    <div class="container">
+      <div class="header">
+        <span class="brand">Home Credit</span>
+      </div>
+      <h2>Adjust Your Offer</h2>
+      <div class="calculator-container">
+        <!-- Summary Box -->
+        <div class="summary-box">
+          <h3>Loan Summary</h3>
+          <p>Loan Term: <span id="summaryTermAdjust">24</span> months</p>
+          <p>Loan Amount: Php <span id="summaryAmountAdjust">50,000</span></p>
+          <p>Processing Fee: Php 500</p>
+          <p>Amount to be Disbursed: Php <span id="summaryDisbursedAdjust">49,500</span></p>
+          <p class="monthly-result">Est. Monthly: Php <span id="monthlyInstallmentAdjust">0.00</span></p>
+        </div>
+        <!-- Calculator Controls -->
+        <div class="calc-controls">
+          <div class="slider-row">
+            <p><strong>Selected Amount:</strong> ₱<span id="loanAmountAdjustDisplay">50,000</span></p>
+            <label>How much money do you need?</label>
+            <input type="range" id="loanAmountAdjust" min="10000" max="150000" step="1000" value="50000" oninput="updateCalculatorAdjust()">
+          </div>
+          <div>
+            <label>Loan Terms (months):</label>
+            <div class="terms-row" id="termOptionsAdjust"></div>
+          </div>
+          <div class="addons-row">
+            <div class="checkbox-label">
+              <input type="checkbox" id="borrowerProtectionAdjust" checked onchange="updateCalculatorAdjust()">
+              <label for="borrowerProtectionAdjust">Borrower's Protection</label>
+            </div>
+            <div class="checkbox-label">
+              <input type="checkbox" id="extraCareAdjust" checked onchange="updateCalculatorAdjust()">
+              <label for="extraCareAdjust">Extra Care</label>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:20px;">
+            <button class="cta" onclick="submitAdjust()">Continue</button>
+          </div>
+          <div style="margin-top:10px;">
+            <button onclick="goToScreen('3')">Back</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-subtext">(This is exclusive to Home Credit employees only, please do not distribute externally.)</div>
+    </div>
+  </div>
+
+  <!-- Screen 5: Final Form Screen -->
+  <div id="screen5" class="screen form-screen">
+    <div class="container">
+      <div class="header">
+        <span class="brand">Home Credit</span>
+      </div>
+      <div class="form-container">
+        <!-- Summary Box -->
+        <div class="summary-box">
+          <h3>Loan Summary</h3>
+          <p>Loan Amount: Php <span id="summaryAmount5"></span></p>
+          <p>Term: <span id="summaryTerm5"></span> months</p>
+          <p>Monthly Installment: Php <span id="summaryMonthly5"></span></p>
+        </div>
+        <!-- Embedded Microsoft Form -->
+        <div class="form-box">
+          <h4>Thank you for expressing interest in Home Credit Cash Loan!</h4>
+          <p>Please fill out the form below so we can get in touch with you. Note that this form does not guarantee that you will receive an approved offer.</p>
+          <p class="subsubtext"><em>If the form did not launch, please click the "Fill out this form" button below.</em></p>
+          <iframe
+            width="640px"
+            height="480px"
+            src="https://forms.office.com/Pages/ResponsePage.aspx?id=28KJynnWnUiJ-ySGzZre1EloKcko8s1Nm-G00mjtE4tUREFWR1FHMk0yRVgzVlcyRlZLVFU2UFkwRC4u&embed=true"
+            frameborder="0"
+            marginwidth="0"
+            marginheight="0"
+            style="border: none; max-width:100%; max-height:100vh;"
+            allowfullscreen
+            webkitallowfullscreen
+            mozallowfullscreen
+            msallowfullscreen>
+          </iframe>
+          <div style="margin-top:20px;">
+            <button class="cta" onclick="backFromScreen5()">Back</button>
+          </div>
+        </div>
+      </div>
+      <div class="footer-subtext">(This is exclusive to Home Credit employees only, please do not distribute externally.)</div>
+    </div>
+  </div>
+
+  <!-- Modal for "I am not interested" confirmation -->
+  <div id="notInterestedModal" class="modal">
+    <div class="modal-content">
+      <h3>Are you sure?</h3>
+      <p>This offer might expire soon, don't miss out!</p>
+      <div class="modal-buttons">
+        <button class="cta" onclick="pickOffer()">I want this offer!</button>
+        <button onclick="declineOffer()">I am not interested at this time</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Logic -->
+  <script>
+    /* Global object to store user selections */
+    var userSelections = {
+      loanAmount: 50000,
+      loanTerm: 24,
+      borrowerProtection: true,
+      extraCare: true,
+      adjusted: false,      // If user visited screen4 and changed something
+      visitedAdjust: false, // If user even visited screen4
+      notInterested: false  // If user chooses "I am not interested"
+    };
+
+    var availableTerms = [6, 9, 12, 18, 24, 30, 36, 42, 48];
+
+    /* Navigation helper */
+    function goToScreen(screen) {
+      var screens = document.getElementsByClassName('screen');
+      for (var i = 0; i < screens.length; i++) {
+        screens[i].classList.remove('active');
+      }
+      var targetId = screen.startsWith("screen") ? screen : "screen" + screen;
+      document.getElementById(targetId).classList.add('active');
+
+      if(targetId === "screen2") {
+        updateCalculator();
+      }
+      if(targetId === "screen3") {
+        updateOfferScreen3();
+      }
+      if(targetId === "screen4") {
+        userSelections.visitedAdjust = true;
+        createTermBoxes('termOptionsAdjust', true);
+        updateCalculatorAdjust();
+      }
+      if(targetId === "screen5") {
+        updateFinalSummary();
+      }
+    }
+
+    /* Called when page loads */
+    window.onload = function() {
+      createTermBoxes('termOptions', false);
+      updateCalculator();
+    };
+
+    /* Create term boxes for screen2 or screen4 */
+    function createTermBoxes(containerId, isAdjust) {
+      var container = document.getElementById(containerId);
+      container.innerHTML = '';
+      availableTerms.forEach(function(t) {
+        var box = document.createElement('div');
+        box.classList.add('term-box');
+        box.innerText = t;
+        box.onclick = function() {
+          if(isAdjust) {
+            userSelections.loanTermAdjust = t;
+            updateCalculatorAdjust();
+          } else {
+            userSelections.loanTerm = t;
+            updateCalculator();
+          }
+        };
+        container.appendChild(box);
+      });
+    }
+
+    function highlightSelectedTerm(containerId, selectedTerm) {
+      var container = document.getElementById(containerId);
+      var boxes = container.getElementsByClassName('term-box');
+      for(var i = 0; i < boxes.length; i++){
+        var tVal = parseInt(boxes[i].innerText);
+        if(tVal === selectedTerm) { boxes[i].classList.add('selected'); }
+        else { boxes[i].classList.remove('selected'); }
+      }
+    }
+
+    /* Screen 2 Calculator */
+    function updateCalculator() {
+      var amount = parseInt(document.getElementById('loanAmount').value);
+      userSelections.loanAmount = amount;
+      document.getElementById('loanAmountDisplay').innerText = formatNumber(amount);
+      var term = userSelections.loanTerm || 24;
+      highlightSelectedTerm('termOptions', term);
+      userSelections.borrowerProtection = document.getElementById('borrowerProtection').checked;
+      userSelections.extraCare = document.getElementById('extraCare').checked;
+      var monthly = computeMonthlyInstallment(amount, term, 0.06, userSelections.borrowerProtection, userSelections.extraCare);
+      document.getElementById('monthlyInstallment').innerText = formatNumber(monthly.toFixed(2));
+      document.getElementById('summaryTerm').innerText = term;
+      document.getElementById('summaryAmount').innerText = formatNumber(amount);
+      document.getElementById('summaryDisbursed').innerText = formatNumber(amount - 500);
+      document.getElementById('summaryMonthly').innerText = formatNumber(monthly.toFixed(2));
+    }
+
+    /* Screen 3: Offer Screen (Version 2) */
+    function updateOfferScreen3() {
+      var amount = userSelections.loanAmount;
+      var term = userSelections.loanTerm;
+      var monthlySpecial = computeMonthlyInstallment(amount, term, 0.05, true, true);
+      document.getElementById('offerLoanAmount').innerText = formatNumber(amount);
+      document.getElementById('offerLoanTerm').innerText = term;
+      document.getElementById('offerMonthly').innerText = formatNumber(monthlySpecial.toFixed(2));
+      var vas = [];
+      if(userSelections.borrowerProtection) vas.push("Borrower's Protection");
+      if(userSelections.extraCare) vas.push("Extra Care");
+      document.getElementById('offerVAS').innerText = vas.length > 0 ? vas.join(", ") : "None";
+    }
+
+    function selectOfferAndContinue() {
+      userSelections.notInterested = false;
+      userSelections.adjusted = false;
+      goToScreen('5');
+    }
+
+    function goToAdjust() {
+      goToScreen('4');
+    }
+
+    /* Screen 4: Adjust Offer */
+    function updateCalculatorAdjust() {
+      var amount = parseInt(document.getElementById('loanAmountAdjust').value);
+      userSelections.adjustLoanAmount = amount;
+      document.getElementById('loanAmountAdjustDisplay').innerText = formatNumber(amount);
+      var term = userSelections.loanTermAdjust || userSelections.loanTerm || 24;
+      highlightSelectedTerm('termOptionsAdjust', term);
+      userSelections.adjustBorrowerProtection = document.getElementById('borrowerProtectionAdjust').checked;
+      userSelections.adjustExtraCare = document.getElementById('extraCareAdjust').checked;
+      var monthly = computeMonthlyInstallment(amount, term, 0.06, userSelections.adjustBorrowerProtection, userSelections.adjustExtraCare);
+      document.getElementById('monthlyInstallmentAdjust').innerText = formatNumber(monthly.toFixed(2));
+      document.getElementById('summaryTermAdjust').innerText = term;
+      document.getElementById('summaryAmountAdjust').innerText = formatNumber(amount);
+      document.getElementById('summaryDisbursedAdjust').innerText = formatNumber(amount - 500);
+    }
+
+    function submitAdjust() {
+      userSelections.adjusted = true;
+      userSelections.notInterested = false;
+      goToScreen('5');
+    }
+
+    /* Screen 5: Final Form Screen */
+    function updateFinalSummary() {
+      var summaryAmountEl = document.getElementById('summaryAmount5');
+      var summaryTermEl = document.getElementById('summaryTerm5');
+      var summaryMonthlyEl = document.getElementById('summaryMonthly5');
+      if(userSelections.notInterested) {
+        summaryAmountEl.innerText = "";
+        summaryTermEl.innerText = "";
+        summaryMonthlyEl.innerText = "";
+        return;
+      }
+      if(userSelections.adjusted) {
+        var adjAmt = userSelections.adjustLoanAmount || userSelections.loanAmount;
+        var adjTerm = userSelections.loanTermAdjust || userSelections.loanTerm;
+        var adjBP = userSelections.adjustBorrowerProtection;
+        var adjEC = userSelections.adjustExtraCare;
+        var monthly = computeMonthlyInstallment(adjAmt, adjTerm, 0.06, adjBP, adjEC);
+        summaryAmountEl.innerText = formatNumber(adjAmt);
+        summaryTermEl.innerText = adjTerm;
+        summaryMonthlyEl.innerText = formatNumber(monthly.toFixed(2));
+      } else {
+        var amount = userSelections.loanAmount;
+        var term = userSelections.loanTerm;
+        var monthly = computeMonthlyInstallment(amount, term, 0.05, true, true);
+        summaryAmountEl.innerText = formatNumber(amount);
+        summaryTermEl.innerText = term;
+        summaryMonthlyEl.innerText = formatNumber(monthly.toFixed(2));
+      }
+    }
+
+    /* "I am not interested" modal logic */
+    function showNotInterestedModal() {
+      document.getElementById('notInterestedModal').style.display = 'flex';
+    }
+    function pickOffer() {
+      userSelections.notInterested = false;
+      document.getElementById('notInterestedModal').style.display = 'none';
+      goToScreen('5');
+    }
+    function declineOffer() {
+      userSelections.notInterested = true;
+      document.getElementById('notInterestedModal').style.display = 'none';
+      goToScreen('5');
+    }
+
+    /* Back from Screen 5 */
+    function backFromScreen5() {
+      if(userSelections.visitedAdjust) {
+        goToScreen('4');
+      } else {
+        goToScreen('3');
+      }
+    }
+
+    /* Monthly installment calculation */
+    function computeMonthlyInstallment(amount, term, rate, includeBP, includeEC) {
+      var principal = amount - 500;
+      var r = rate;
+      var base = (principal * r * Math.pow(1 + r, term)) / (Math.pow(1 + r, term) - 1);
+      var bpCost = 0;
+      if(includeBP) {
+        if(amount <= 25000) {
+          bpCost = (0.004 * amount) + 50;
+        } else {
+          bpCost = (0.003 * amount) + 50;
+        }
+      }
+      var ecCost = includeEC ? 99 : 0;
+      return base + bpCost + ecCost;
+    }
+
+    function formatNumber(num) {
+      return parseInt(num).toLocaleString('en-US');
+    }
+  </script>
+</body>
+</html>
